@@ -18,6 +18,12 @@ router.get('/', (req, res) => {
   res.send(filteredEvents)
 })
 
+router.post('/', (req,res) => {
+  let eventNew = req.body
+  getEvents().push(eventNew)
+  res.status(200).send(getEvents())
+})
+
 router.put('/edit/:id', (req, res) => {
   const data = req.body
   const id = req.params.id

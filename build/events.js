@@ -6,19 +6,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const eventService_1 = require("./services/eventService");
 const router = express_1.default.Router();
-router.get('/', (_, res) => {
-    res.send((0, eventService_1.getEvents)());
-});
-router.post('/', (req, res) => {
+router.get('/', (req, res) => {
     const filters = req.query;
-    const filteredEvents = (0, eventService_1.getEvents)().filter(event => {
+    const filteredEvents = (0, eventService_1.getEvents)().filter((data) => {
         let isValid = true;
-        for (key in filters) {
-            console.log(key, event[key], filters[key]);
-            isValid = isValid && event[key] == filters[key];
+        for (let key in filters) {
+            isValid = isValid && data[key].toLowerCase().includes(filters[key]);
         }
         return isValid;
     });
     res.send(filteredEvents);
+});
+router.post('/', (req, res) => {
+    let eventNew = req.body;
+    (0, eventService_1.getEvents)().push(eventNew);
+    res.status(200).send((0, eventService_1.getEvents)());
+});
+router.put('/edit/:id', (req, res) => {
+    const data = req.body;
+    const id = req.params.id;
+    const indice = (0, eventService_1.getEvents)().findIndex(value => value.name == id);
+    if (indice >= 0) {
+        (0, eventService_1.getEvents)()[indice] = data;
+    }
+    res.status(200).send((0, eventService_1.getEvents)());
 });
 exports.default = router;
